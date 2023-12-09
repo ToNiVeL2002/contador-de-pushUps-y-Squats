@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:push_up_counter/models/bloc/push_up_counter_state.dart';
 import 'package:push_up_counter/models/push_up_model.dart';
 
 Future<String> getAssetPath(String asset) async {
@@ -44,15 +45,23 @@ double angle(
       return degrees;
   }
 
-PushUpState? isPushUp(double angleElbow, PushUpState current){
-  final umbralElbow = 60.0;
-  final umbralElbowExt = 160.0;
+  PushUpState? isPushUp(double angleElbow, PushUpState current) {
+    final umbralElbow = 60.0;
+    final umbralElbowExt = 160.0;
 
-  if(current == PushUpState.neutral && angleElbow > umbralElbowExt && angleElbow < 180.0){
-    return PushUpState.init;
-  }else if(current == PushUpState.init && angleElbow < umbralElbow && angleElbow > 40.0){
-    return PushUpState.complete;
+    print('isPushUp - current: $current, angleElbow: $angleElbow');
+
+    if (current == PushUpState.neutral && angleElbow > umbralElbowExt && angleElbow < 180.0) {
+      print('isPushUp - Returning: PushUpState.init');
+      return PushUpState.init;
+    } else if (current == PushUpState.init && angleElbow < umbralElbow && angleElbow > 40.0) {
+      print('isPushUp - Returning: PushUpState.complete');
+      return PushUpState.complete;
+    }
+
+    print('isPushUp - Returning: null');
+
+    return null;
   }
 
-}
 

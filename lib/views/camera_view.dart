@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
+import 'package:push_up_counter/models/bloc/push_up_counter_bloc.dart';
+import 'package:push_up_counter/models/bloc/push_up_counter_event.dart';
+import 'package:push_up_counter/models/bloc/push_up_counter_state.dart';
 import 'package:push_up_counter/models/push_up_model.dart';
 import 'package:push_up_counter/painters/pose_painter.dart';
 import 'package:push_up_counter/utils.dart' as utils;
@@ -75,12 +78,14 @@ class _CameraViewState extends State<CameraView> {
 
   // para verificar si es DISTINTO del anterior
   @override
-  void didUpdateWidget (covariant CameraView oldWidget) {
+  void didUpdateWidget(covariant CameraView oldWidget) {
     if (widget.customPaint != oldWidget.customPaint) {
-      if(widget.customPaint == null) return;
-      final bloc = BlocProvider.of<PushUpCounter>(context);
-      for(final pose in widget.posePainter!.poses){
-        PoseLandmark getPoseLandmark(PoseLandmarkType type1){
+      if (widget.customPaint == null) return;
+
+      final pushUpBloc = BlocProvider.of<PushUpCounterBloc>(context);
+
+      for (final pose in widget.posePainter!.poses) {
+        PoseLandmark getPoseLandmark(PoseLandmarkType type1) {
           final PoseLandmark joint1 = pose.landmarks[type1]!;
           return joint1;
         }
@@ -91,26 +96,31 @@ class _CameraViewState extends State<CameraView> {
       }
 
       // ahora lo verificamos
-      if(p1!=null && p2!=null && p3!=null ){
+      if (p1 != null && p2 != null && p3 != null) {
         final rtaAngle = utils.angle(p1!, p2!, p3!);
-        // state = PushUpState
-        final rta = utils.isPushUp(rtaAngle, bloc.state);
-        
-        print('Angulo: ${rtaAngle.toStringAsFixed(2)}');
 
-        if(rta != null){
-          if(rta == PushUpState.init){
-            bloc.setPushUpState(rta);
-          }else if(rta == PushUpState.complete){
-            bloc.increment();
-            bloc.setPushUpState(PushUpState.neutral); // es solo para reiniciar
+        final rta = utils.isPushUp(rtaAngle, pushUpBloc.state.pushUpState);
+
+        // Emitir un evento IncrementPushUpEvent al BLoC
+        // pushUpBloc.add(IncrementPushUpEvent());
+
+        // print('-- Angulo: ${rtaAngle.toStringAsFixed(2)}');
+
+        // Actualizar el estado según la lógica de pushUp
+
+        if (rta != null) {
+          if (rta == PushUpState.init) {
+            pushUpBloc.add(SetPushUpStateEvent(rta));
+          } else if (rta == PushUpState.complete) {
+            pushUpBloc.add(IncrementPushUpEvent());
+            pushUpBloc.add(SetPushUpStateEvent(PushUpState.neutral));
           }
         }
+        print('didUpdateWidget - current state: ${pushUpBloc.state}');
+        print('didUpdateWidget - rta: $rta');
       }
-      
     }
     super.didUpdateWidget(oldWidget);
-    
   }
 
   @override
@@ -156,66 +166,71 @@ class _CameraViewState extends State<CameraView> {
 
   /////////////////////////////////////////////////////////////////////////////////////
   // INCREMENTO
-  Widget _counterWidget(){
-    final bloc = BlocProvider.of<PushUpCounter>(context);
-    return Positioned(
-      left: 0,
-      top: 50,
-      right: 0,
-      child: Container(
-        width: 70,
-        child: Column(
-          children: [
-            const Text(
-              'Contador',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-            Container(
-              width: 70,
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                border: Border.all(color: Colors.white.withOpacity(0.4), width: 4.0), 
-                borderRadius: BorderRadius.all(Radius.circular(12))
-              ),
-              child: Text(
-                '${bloc.counter}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold
+  Widget _counterWidget() {
+    return BlocBuilder<PushUpCounterBloc, PushUpCounterState>(
+      builder: (context, state) {
+        return Positioned(
+          left: 0,
+          top: 50,
+          right: 0,
+          child: Container(
+            width: 70,
+            child: Column(
+              children: [
+                const Text(
+                  'Contador',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                 ),
-                ),
-            )
-          ],
-        ),
-      ),
+                Container(
+                  width: 70,
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    border: Border.all(color: Colors.white.withOpacity(0.4), width: 4.0),
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: Text(
+                    '${state.counter}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
+
   Widget _backButton() => Positioned(
-        top: 40,
-        left: 8,
-        child: SizedBox(
-          height: 50.0,
-          width: 50.0,
-          child: FloatingActionButton(
-            heroTag: Object(),
-            onPressed: () {
-              ////////////////////////////////////////////////////////////////
-              // RESET
-              BlocProvider.of<PushUpCounter>(context).reset();
-              Navigator.of(context).pop();
-            },
-            backgroundColor: Colors.black54,
-            child: Icon(
-              Icons.arrow_back_ios_outlined,
-              size: 20,
-              color: Colors.white,
-            ),
-          ),
+    top: 40,
+    left: 8,
+    child: SizedBox(
+      height: 50.0,
+      width: 50.0,
+      child: FloatingActionButton(
+        heroTag: Object(),
+        onPressed: () {
+          ////////////////////////////////////////////////////////////////
+          // RESET
+          BlocProvider.of<PushUpCounterBloc>(context).add(ResetPushUpEvent());
+          Navigator.of(context).pop();
+        },
+        backgroundColor: Colors.black54,
+        child: Icon(
+          Icons.arrow_back_ios_outlined,
+          size: 20,
+          color: Colors.white,
         ),
-      );
+      ),
+    ),
+  );
+
 
   Widget _detectionViewModeToggle() => Positioned(
         bottom: 8,
