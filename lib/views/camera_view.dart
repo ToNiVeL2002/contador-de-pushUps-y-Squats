@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
+import 'package:push_up_counter/models/bloc/angulo_bar_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_event.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_state.dart';
@@ -83,6 +84,7 @@ class _CameraViewState extends State<CameraView> {
       if (widget.customPaint == null) return;
 
       final pushUpBloc = BlocProvider.of<PushUpCounterBloc>(context);
+      final anguloBar = BlocProvider.of<AnguloBarBloc>(context);
 
       for (final pose in widget.posePainter!.poses) {
         PoseLandmark getPoseLandmark(PoseLandmarkType type1) {
@@ -99,14 +101,11 @@ class _CameraViewState extends State<CameraView> {
       if (p1 != null && p2 != null && p3 != null) {
         final rtaAngle = utils.angle(p1!, p2!, p3!);
 
+        ///////////////////////
+        anguloBar.add(MostrarAngulo(rtaAngle));
+
         final rta = utils.isPushUp(rtaAngle, pushUpBloc.state.pushUpState);
 
-        // Emitir un evento IncrementPushUpEvent al BLoC
-        // pushUpBloc.add(IncrementPushUpEvent());
-
-        // print('-- Angulo: ${rtaAngle.toStringAsFixed(2)}');
-
-        // Actualizar el estado según la lógica de pushUp
 
         if (rta != null) {
           if (rta == PushUpState.init) {
@@ -116,8 +115,6 @@ class _CameraViewState extends State<CameraView> {
             pushUpBloc.add(SetPushUpStateEvent(PushUpState.neutral));
           }
         }
-        print('didUpdateWidget - current state: ${pushUpBloc.state}');
-        print('didUpdateWidget - rta: $rta');
       }
     }
     super.didUpdateWidget(oldWidget);
@@ -154,6 +151,7 @@ class _CameraViewState extends State<CameraView> {
                   ),
           ),
           _counterWidget(),
+          _barWidget(),
           _backButton(),
           _switchLiveCameraToggle(),
           _detectionViewModeToggle(),
@@ -206,6 +204,33 @@ class _CameraViewState extends State<CameraView> {
     );
   }
 
+  // Barra de progreso
+  Widget _barWidget(){
+    return BlocBuilder<AnguloBarBloc, AnguloBarState>(
+      builder: (context, state) {
+        return Positioned(
+          // left: 35,
+          right: 35,
+          bottom: MediaQuery.of(context).size.height/2 - 100,
+          child: Container(
+            width: 60,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white.withOpacity(0.4), width: 4.0),
+              borderRadius: BorderRadius.all(Radius.circular(12))
+            ),
+            child: Container(
+              height: state.anguloVer,
+              width: 50,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(90, 0, 255, 0),
+                borderRadius: BorderRadius.circular(20)
+              ),
+            ),
+          )
+        );
+      },
+    );
+  }
 
   Widget _backButton() => Positioned(
     top: 40,

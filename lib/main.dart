@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:push_up_counter/models/bloc/angulo_bar_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_bloc.dart';
 import 'package:push_up_counter/models/push_up_model.dart';
 import 'package:push_up_counter/views/splash_screen.dart';
@@ -13,8 +14,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PushUpCounterBloc(),
+    return MultiBlocProvider(
+      // create: (context) => PushUpCounterBloc(),
+
+      providers: [
+        BlocProvider<PushUpCounterBloc>(create: (context) => PushUpCounterBloc()),
+        BlocProvider<AnguloBarBloc>(create: (context) => AnguloBarBloc())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Material App',

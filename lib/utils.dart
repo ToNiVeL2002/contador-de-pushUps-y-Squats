@@ -42,24 +42,21 @@ double angle(
       if (degrees > 180.0) {
           degrees = 360.0 - degrees;
       }
+      print(' podemos -- ${degrees}');
+      
       return degrees;
   }
 
   PushUpState? isPushUp(double angleElbow, PushUpState current) {
-    final umbralElbow = 60.0;
+    final umbralElbow = 70.0;
     final umbralElbowExt = 160.0;
 
-    print('isPushUp - current: $current, angleElbow: $angleElbow');
 
-    if (current == PushUpState.neutral && angleElbow > umbralElbowExt && angleElbow < 180.0) {
-      print('isPushUp - Returning: PushUpState.init');
+    if (current == PushUpState.neutral && angleElbow > umbralElbowExt && angleElbow < 175.0) {
       return PushUpState.init;
-    } else if (current == PushUpState.init && angleElbow < umbralElbow && angleElbow > 40.0) {
-      print('isPushUp - Returning: PushUpState.complete');
+    } else if (current == PushUpState.init && angleElbow < umbralElbow && angleElbow > 50.0) {
       return PushUpState.complete;
     }
-
-    print('isPushUp - Returning: null');
 
     return null;
   }
