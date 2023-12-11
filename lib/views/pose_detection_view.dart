@@ -7,6 +7,11 @@ import '../painters/pose_painter.dart';
 import 'detector_view.dart';
 
 class PoseDetectorView extends StatefulWidget {
+
+  const PoseDetectorView({super.key, required this.bandera});
+
+  final bool bandera;
+
   @override
   State<StatefulWidget> createState() => _PoseDetectorViewState();
 }
@@ -37,7 +42,8 @@ class _PoseDetectorViewState extends State<PoseDetectorView> {
       text: _text,
       onImage: _processImage,
       initialCameraLensDirection: _cameraLensDirection,
-      onCameraLensDirectionChanged: (value) => _cameraLensDirection = value,
+      onCameraLensDirectionChanged: (value) => _cameraLensDirection = value, 
+      cambia: widget.bandera,
     );
   }
 

@@ -20,7 +20,8 @@ class DetectorView extends StatefulWidget {
     this.initialCameraLensDirection = CameraLensDirection.back,
     this.onCameraFeedReady,
     this.onDetectorViewModeChanged,
-    this.onCameraLensDirectionChanged,
+    this.onCameraLensDirectionChanged, 
+    required this.cambia,
   }) : super(key: key);
 
   final PosePainter? posePainter;
@@ -33,6 +34,7 @@ class DetectorView extends StatefulWidget {
   final Function(DetectorViewMode mode)? onDetectorViewModeChanged;
   final Function(CameraLensDirection direction)? onCameraLensDirectionChanged;
   final CameraLensDirection initialCameraLensDirection;
+  final bool cambia;
 
   @override
   State<DetectorView> createState() => _DetectorViewState();
@@ -58,7 +60,8 @@ class _DetectorViewState extends State<DetectorView> {
             onCameraFeedReady: widget.onCameraFeedReady,
             onDetectorViewModeChanged: _onDetectorViewModeChanged,
             initialCameraLensDirection: widget.initialCameraLensDirection,
-            onCameraLensDirectionChanged: widget.onCameraLensDirectionChanged,
+            onCameraLensDirectionChanged: widget.onCameraLensDirectionChanged, 
+            cambiaPoS: widget.cambia,
           )
         : GalleryView(
             title: widget.title,

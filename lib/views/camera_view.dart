@@ -23,7 +23,8 @@ class CameraView extends StatefulWidget {
       this.onCameraFeedReady,
       this.onDetectorViewModeChanged,
       this.onCameraLensDirectionChanged,
-      this.initialCameraLensDirection = CameraLensDirection.back})
+      this.initialCameraLensDirection = CameraLensDirection.back, 
+      required this.cambiaPoS})
       : super(key: key);
 
   final PosePainter? posePainter;
@@ -33,6 +34,7 @@ class CameraView extends StatefulWidget {
   final VoidCallback? onDetectorViewModeChanged;
   final Function(CameraLensDirection direction)? onCameraLensDirectionChanged;
   final CameraLensDirection initialCameraLensDirection;
+  final bool cambiaPoS;
 
   @override
   State<CameraView> createState() => _CameraViewState();
@@ -92,9 +94,17 @@ class _CameraViewState extends State<CameraView> {
           return joint1;
         }
 
-        p1 = getPoseLandmark(PoseLandmarkType.rightShoulder);
-        p2 = getPoseLandmark(PoseLandmarkType.rightElbow);
-        p3 = getPoseLandmark(PoseLandmarkType.rightWrist);
+        if (widget.cambiaPoS) {
+          p1 = getPoseLandmark(PoseLandmarkType.rightShoulder);
+          p2 = getPoseLandmark(PoseLandmarkType.rightElbow);
+          p3 = getPoseLandmark(PoseLandmarkType.rightWrist);
+          
+        }else{
+          p1 = getPoseLandmark(PoseLandmarkType.rightHip);
+          p2 = getPoseLandmark(PoseLandmarkType.rightKnee);
+          p3 = getPoseLandmark(PoseLandmarkType.rightHeel);
+        }
+
       }
 
       // ahora lo verificamos

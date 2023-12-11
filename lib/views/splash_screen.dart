@@ -11,10 +11,10 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Color(0xff273338),
+      backgroundColor: const Color(0xff273338),
       minimumSize: Size(size.width*0.85, 50),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      shape: RoundedRectangleBorder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(12))
       )
     );
@@ -36,7 +36,7 @@ class SplashScreen extends StatelessWidget {
                   fit: BoxFit.cover
               ),
             ),
-            SizedBox(height: 40,),
+            const SizedBox(height: 40,),
 
             const Text(
               'Contador de Push Up',
@@ -46,6 +46,7 @@ class SplashScreen extends StatelessWidget {
                 letterSpacing: -0.2,
               ),
             ),
+
             Container(
               width: size.width*0.7,
               child: const Text(
@@ -57,17 +58,39 @@ class SplashScreen extends StatelessWidget {
                 ),
               ),
             ),
+
             Spacer(),
+
             ElevatedButton(
               style: raisedButtonStyle,
               onPressed: (){
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => PoseDetectorView()),
+                  MaterialPageRoute(builder: (_) => PoseDetectorView(bandera: true,)),
                 );
               }, 
               child: Text(
-                'Inicar!',
+                'Inicar Push-Ups!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20
+                ),
+              )
+            ),
+            SizedBox(
+              height: size.height*0.03,
+            ),
+
+            ElevatedButton(
+              style: raisedButtonStyle,
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => PoseDetectorView(bandera: false,)),
+                );
+              }, 
+              child: Text(
+                'Inicar Squats!',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20

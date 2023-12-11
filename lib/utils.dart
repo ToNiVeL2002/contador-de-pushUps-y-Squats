@@ -54,7 +54,7 @@ double angle(
 
     if (current == PushUpState.neutral && angleElbow > umbralElbowExt && angleElbow < 175.0) {
       return PushUpState.init;
-    } else if (current == PushUpState.init && angleElbow < umbralElbow && angleElbow > 50.0) {
+    } else if (current == PushUpState.init && angleElbow < umbralElbow && angleElbow > 60.0) {
       return PushUpState.complete;
     }
 
