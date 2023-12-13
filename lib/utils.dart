@@ -19,6 +19,7 @@ Future<String> getAssetPath(String asset) async {
   }
   return file.path;
 }
+//by samu
 
 Future<String> getLocalPath(String path) async {
   return '${(await getApplicationSupportDirectory()).path}/$path';
@@ -42,7 +43,7 @@ double angle(
       if (degrees > 180.0) {
           degrees = 360.0 - degrees;
       }
-      print(' podemos -- ${degrees}');
+      // print(' podemos -- ${degrees}');
       
       return degrees;
   }

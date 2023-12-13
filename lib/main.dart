@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:push_up_counter/models/bloc/angulo_bar_bloc.dart';
+import 'package:push_up_counter/models/bloc/bloc/llenar_datos_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_bloc.dart';
-import 'package:push_up_counter/models/push_up_model.dart';
-import 'package:push_up_counter/views/splash_screen.dart';
+import 'package:push_up_counter/views/datos_screen.dart';
 
-import 'views/pose_detection_view.dart';
 
 void main() => runApp(const MyApp());
 
@@ -19,12 +18,13 @@ class MyApp extends StatelessWidget {
 
       providers: [
         BlocProvider<PushUpCounterBloc>(create: (context) => PushUpCounterBloc()),
-        BlocProvider<AnguloBarBloc>(create: (context) => AnguloBarBloc())
+        BlocProvider<AnguloBarBloc>(create: (context) => AnguloBarBloc()),
+        BlocProvider<LlenarDatosBloc>(create: (context) => LlenarDatosBloc())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Material App',
-        home: SplashScreen()
+        home: DatosScreen()
       ),
     );
   }

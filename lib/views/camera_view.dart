@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:push_up_counter/models/bloc/angulo_bar_bloc.dart';
+import 'package:push_up_counter/models/bloc/bloc/llenar_datos_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_event.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_state.dart';
@@ -153,13 +154,14 @@ class _CameraViewState extends State<CameraView> {
           Center(
             child: _changingCameraLens
                 ? Center(
-                    child: const Text('Changing camera lens'),
+                    child: const Text('Cambiar lente'),
                   )
                 : CameraPreview(
                     _controller!,
                     child: widget.customPaint,
                   ),
           ),
+          widget.cambiaPoS ? _completadoP() : _completadoS(),
           _counterWidget(),
           _barWidget(),
           _backButton(),
@@ -206,7 +208,7 @@ class _CameraViewState extends State<CameraView> {
                     ),
                   ),
                 )
-              ],
+              ], //bySamu
             ),
           ),
         );
@@ -239,6 +241,56 @@ class _CameraViewState extends State<CameraView> {
           )
         );
       },
+    );
+  }
+
+  Widget _completadoP(){
+
+    return BlocBuilder<PushUpCounterBloc, PushUpCounterState>(
+      builder:  (context, state){
+        final llenarDatosBloc = context.read<LlenarDatosBloc>();
+        return state.counter >= llenarDatosBloc.state.repP ? Positioned(
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          child: Center(
+            child: Text(
+              'ACABASTE los push-up!!!',
+              style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+              ),
+            ),
+          )
+        ) : Container();
+      }
+    );
+  }
+
+  Widget _completadoS(){
+
+    return BlocBuilder<PushUpCounterBloc, PushUpCounterState>(
+      builder:  (context, state){
+        final llenarDatosBloc = context.read<LlenarDatosBloc>();
+        return state.counter >= llenarDatosBloc.state.repS ? Positioned(
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          child: Center(
+            child: Text(
+              'ACABASTE los squats!!!',
+              style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+                color: Colors.white
+              ),
+            ),
+          )
+        ) : Container();
+      }
     );
   }
 
