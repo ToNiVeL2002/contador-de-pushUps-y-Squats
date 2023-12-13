@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:push_up_counter/models/bloc/angulo_bar_bloc.dart';
+import 'package:push_up_counter/models/bloc/bloc/contador_sets_bloc.dart';
 import 'package:push_up_counter/models/bloc/bloc/llenar_datos_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_event.dart';
@@ -139,10 +140,10 @@ class _CameraViewState extends State<CameraView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _liveFeedBody());
+    return Scaffold(body: _liveFeedBody(context));
   }
 
-  Widget _liveFeedBody() {
+  Widget _liveFeedBody(BuildContext contexto) {
     if (_cameras.isEmpty) return Container();
     if (_controller == null) return Container();
     if (_controller?.value.isInitialized == false) return Container();
@@ -162,7 +163,7 @@ class _CameraViewState extends State<CameraView> {
                   ),
           ),
           widget.cambiaPoS ? _completadoP() : _completadoS(),
-          _counterWidget(),
+          _counterWidget(contexto),
           _barWidget(),
           _backButton(),
           _switchLiveCameraToggle(),
@@ -176,9 +177,10 @@ class _CameraViewState extends State<CameraView> {
 
   /////////////////////////////////////////////////////////////////////////////////////
   // INCREMENTO
-  Widget _counterWidget() {
+  Widget _counterWidget( BuildContext contexto) {
+    final contadorsetsBloc = BlocProvider.of<ContadorSetsBloc>(contexto);
     return BlocBuilder<PushUpCounterBloc, PushUpCounterState>(
-      builder: (context, state) {
+      builder: (contexto, state) {
         return Positioned(
           left: 0,
           top: 50,
@@ -207,7 +209,11 @@ class _CameraViewState extends State<CameraView> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                )
+                ),
+
+                SizedBox(height: 10,),
+
+                Text('Te faltan ${contadorsetsBloc.state.setsFaltantes}stes', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
               ], //bySamu
             ),
           ),
@@ -245,6 +251,8 @@ class _CameraViewState extends State<CameraView> {
   }
 
   Widget _completadoP(){
+    final pushUpCounterBloc = BlocProvider.of<PushUpCounterBloc>(context);
+    final contadorsetsBloc = BlocProvider.of<ContadorSetsBloc>(context);
 
     return BlocBuilder<PushUpCounterBloc, PushUpCounterState>(
       builder:  (context, state){
@@ -255,12 +263,29 @@ class _CameraViewState extends State<CameraView> {
           right: 0,
           bottom: 0,
           child: Center(
-            child: Text(
-              'ACABASTE los push-up!!!',
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.white
+            child: GestureDetector(
+              onTap: (){
+                pushUpCounterBloc.add(ResetPushUpEvent());
+                contadorsetsBloc.add(DecrementoSets());
+              },
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'DESCANSA de los push-up!!!',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
+                    ),
+                  ),
+                  Text(
+                    'Toca para reiniciar',
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
+                  )
+                ],
               ),
             ),
           )
@@ -270,6 +295,7 @@ class _CameraViewState extends State<CameraView> {
   }
 
   Widget _completadoS(){
+    final pushUpCounterBloc = BlocProvider.of<PushUpCounterBloc>(context);
 
     return BlocBuilder<PushUpCounterBloc, PushUpCounterState>(
       builder:  (context, state){
@@ -280,12 +306,28 @@ class _CameraViewState extends State<CameraView> {
           right: 0,
           bottom: 0,
           child: Center(
-            child: Text(
-              'ACABASTE los squats!!!',
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.white
+            child: GestureDetector(
+              onTap: (){
+                pushUpCounterBloc.add(ResetPushUpEvent());
+              },
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'DESCANSA de los squats!!!',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
+                    ),
+                  ),
+                  Text(
+                    'Toca para reiniciar',
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
+                  )
+                ],
               ),
             ),
           )
@@ -309,7 +351,7 @@ class _CameraViewState extends State<CameraView> {
           Navigator.of(context).pop();
         },
         backgroundColor: Colors.black54,
-        child: Icon(
+        child: const Icon(
           Icons.arrow_back_ios_outlined,
           size: 20,
           color: Colors.white,
@@ -352,6 +394,7 @@ class _CameraViewState extends State<CameraView> {
                   ? Icons.flip_camera_ios_outlined
                   : Icons.flip_camera_android_outlined,
               size: 25,
+              color: Colors.white,
             ),
           ),
         ),

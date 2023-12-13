@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:push_up_counter/models/bloc/angulo_bar_bloc.dart';
+import 'package:push_up_counter/models/bloc/bloc/contador_sets_bloc.dart';
 import 'package:push_up_counter/models/bloc/bloc/llenar_datos_bloc.dart';
 import 'package:push_up_counter/models/bloc/push_up_counter_bloc.dart';
 import 'package:push_up_counter/views/datos_screen.dart';
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<PushUpCounterBloc>(create: (context) => PushUpCounterBloc()),
         BlocProvider<AnguloBarBloc>(create: (context) => AnguloBarBloc()),
-        BlocProvider<LlenarDatosBloc>(create: (context) => LlenarDatosBloc())
+        BlocProvider<LlenarDatosBloc>(create: (context) => LlenarDatosBloc()),
+        BlocProvider<ContadorSetsBloc>(create: (context) => ContadorSetsBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

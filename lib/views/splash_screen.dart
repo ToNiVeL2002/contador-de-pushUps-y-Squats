@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:push_up_counter/models/bloc/angulo_bar_bloc.dart';
+import 'package:push_up_counter/models/bloc/bloc/contador_sets_bloc.dart';
 import 'package:push_up_counter/models/bloc/bloc/llenar_datos_bloc.dart';
 import 'package:push_up_counter/views/pose_detection_view.dart';
 
@@ -20,6 +21,7 @@ class SplashScreen extends StatelessWidget {
 
     return BlocBuilder<LlenarDatosBloc, LlenarDatosState>(
       builder: (context, state) {
+        final contadorsetsBloc = BlocProvider.of<ContadorSetsBloc>(context);
         return Scaffold(
             backgroundColor: Color(0xfff5f5f5),
             body: SingleChildScrollView(
@@ -101,6 +103,7 @@ class SplashScreen extends StatelessWidget {
                                       bandera: true,
                                     )),
                           );
+                          contadorsetsBloc.add(MostrarSetsFaltantes(state.setsP));
                         },
                         child: const Text(
                           'Inicar Push-Ups!',
@@ -119,6 +122,7 @@ class SplashScreen extends StatelessWidget {
                                       bandera: false,
                                     )),
                           );
+                          contadorsetsBloc.add(MostrarSetsFaltantes(state.setsS));
                         },
                         child: const Text(
                           'Inicar Squats!',
